@@ -1,22 +1,17 @@
+import glob
+
 import pandas as pd
 import numpy as np
-import glob
+import lightgbm as lgb
+
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 50)
 pd.set_option('display.width', 1000)
-
-import lightgbm as lgb
-from sklearn.model_selection import cross_val_score
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-
-import os
-from os import listdir
-from os.path import isfile, join
-from sklearn.model_selection import GridSearchCV
-
-from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler
 
 PRED_COLS = ['AST', 'BLK', 'DREB', 'FG3A', 'FG3M', 'FGA', 'FGM', 'FTA', 'FTM', 'OREB', 'PF', 'STL', 'TO']
 
@@ -37,7 +32,7 @@ PREDICTION_STATS = ['AST_home', 'BLK_home', 'DREB_home', "FG3A_home", "FGA_home"
 #%%
 
 def get_season_games(season=2021):
-    games = dfs['dataset_games'].copy()
+    games = dfs['games'].copy()
     games = games[['TEAM_ID_home', 'TEAM_ID_away', 'HOME_TEAM_WINS', 'GAME_ID', 'GAME_DATE_EST']]
 
     regular_games = games[(REGULAR_SEASON_DURATION[season][0] <= pd.to_datetime(games['GAME_DATE_EST'])) & (
@@ -48,7 +43,7 @@ def get_season_games(season=2021):
 
 def get_team_boxscore(team_id=1610612738, is_home=True):
     games = get_season_games(2021)
-    games_details = dfs['dataset_games_details'].copy()
+    games_details = dfs['games_details'].copy()
     # join games to games_details for date information
     games_details = games_details.merge(games, on='GAME_ID')
 
@@ -67,7 +62,7 @@ def get_team_boxscore(team_id=1610612738, is_home=True):
 
 def get_team_boxscore_by_position(team_id=1610612738, is_home=True, start_position='F'):
     games = get_season_games(2021)
-    games_details = dfs['dataset_games_details'].copy()
+    games_details = dfs['games_details'].copy()
     # join games to games_details for date information
     games_details = games_details.merge(games, on='GAME_ID')
 
@@ -87,7 +82,7 @@ def get_team_boxscore_by_position(team_id=1610612738, is_home=True, start_positi
 
 def get_season_boxscore(season=2021):
     games = get_season_games(season)
-    games_details = dfs['dataset_games_details'].copy()
+    games_details = dfs['games_details'].copy()
 
     # add games details to regular season games
     games_details = games_details.merge(games, on='GAME_ID')
