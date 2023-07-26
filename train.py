@@ -169,7 +169,7 @@ def oliver_factors(train_data):
             "TO_home"])
     oliver['reb_home'] = (train_data['OREB_home']) / (
                 train_data["OREB_home"] + train_data["DREB_home"])
-    oliver['ft_home'] = (train_data['FTA_home']) / (train_data["FGA_home"])
+    oliver['ft_home'] = (train_data['FTM_home']) / (train_data["FGA_home"])
 
     oliver['shooting_away'] = (train_data['FGM_away'] + 0.5 * train_data['FG3M_away']) / \
                               train_data['FGA_away']
@@ -178,7 +178,7 @@ def oliver_factors(train_data):
             "TO_away"])
     oliver['reb_away'] = (train_data['OREB_away']) / (
                 train_data["OREB_away"] + train_data["DREB_away"])
-    oliver['ft_away'] = (train_data['FTA_away']) / (train_data["FGA_away"])
+    oliver['ft_away'] = (train_data['FTM_away']) / (train_data["FGA_away"])
 
     oliver_y = train_data["HOME_TEAM_WINS"]
 
